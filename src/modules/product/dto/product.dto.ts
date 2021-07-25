@@ -6,7 +6,7 @@ export class ProductDTO {
     @ApiProperty({ type: Number, required: true })
     price: number;
     @ApiProperty({ type: [String], required: true, description: 'List of product ingredient Ids' })
-    ingredient: string[];
+    ingredients: string[];
     @ApiProperty({ type: Number, required: true })
     expiresAfterDays: number;
     @ApiProperty({ type: String, required: true })
