@@ -1,34 +1,61 @@
-import { Body, Controller, Get, HttpStatus, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
 import {
-    ApiBearerAuth,
+    ApiCookieAuth,
+    ApiOkResponse,
     ApiOperation,
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { cookieNames } from "src/modules/auth/constants";
+import { Role } from "src/modules/user/user";
+import { Roles } from "src/shared/decorators/role";
+import { RolesGuard } from "src/shared/guards/role.guard";
 import { ProductDTO } from "../dto/product.dto";
+import { ProductService } from "../services/product.service";
 
-@ApiBearerAuth()
-@ApiTags('products')
 @Controller('products')
+@ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+@ApiTags('Products')
+@UseGuards(RolesGuard, AuthGuard("jwt"))
 export class ProductController {
+    constructor(private productService: ProductService) { }
 
     @Post()
     @ApiOperation({ summary: "Create New Product" })
-    @ApiResponse({ status: HttpStatus.CREATED, description: "New Product Registered" })
+    @ApiResponse({ status: HttpStatus.CREATED })
+    @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
+    @Roles(Role.MANAGER)
     async create(@Body() product: ProductDTO) {
-        // if the user is trying to register again with the same type and date,
-        // increment on to already available document
-        // else register
-
-        // products registered everyday
-        // products not sold will be added to the next days
+        return await this.productService.create(product);
+    }
+    @Get()
+    @ApiOkResponse({})
+    @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
+    async findAll() {
+        return await this.productService.getAllWithIngredients();
+    }
+    @Get(":id")
+    @ApiOkResponse({})
+    @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
+    @Roles(Role.MANAGER)
+    async findOne(@Param("id") id: string) {
+        return await this.productService.getOneWithIngredients(id);
     }
 
+    @ApiOkResponse({})
+    @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
+    @Patch(":id")
+    @Roles(Role.MANAGER)
+    async update(@Param("id") id: string, @Body() update: Partial<ProductDTO>) {
+        return await this.productService.update(id, update)
+    }
 
-    @Get()
-    async findAll() { }
-
+    @ApiOkResponse({})
+    @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
+    @Delete(":id")
+    @Roles(Role.MANAGER)
+    async remove(@Param("id") id: string) {
+        return await this.productService.deleteById(id);
+    }
 }
-
-// @ApiProperty({ example: 1, description: 'The age of the Cat' })
-// age: number;

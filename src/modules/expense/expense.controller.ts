@@ -1,26 +1,29 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiCookieAuth, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { cookieNames } from "src/modules/auth/constants";
-import { Role } from "src/modules/user/user";
+import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/shared/decorators/role";
 import { RolesGuard } from "src/shared/guards/role.guard";
-import { ProductIngredientDTO } from "../dto/product-ingredient.dto";
-import { ProductIngredientService } from "../services/product-ingredient.service";
+import { cookieNames } from "../auth/constants";
+import { BudgetService } from "../budget/budget.service";
+import { Role } from "../user/user";
+import { ExpenseDTO } from "./expense.dto";
+import { ExpenseService } from "./expense.service";
 
-@Controller('product-ingredients')
-@ApiTags('Product Ingredients')
+@Controller("expenses")
 @ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+@ApiTags('Expenses')
 @UseGuards(RolesGuard, AuthGuard("jwt"))
-export class ProductIngredientController {
-    constructor(private productIngredientService: ProductIngredientService) { }
+export class ExpenseController {
+    constructor(private expenseService: ExpenseService,
+        private budgetService: BudgetService) { }
     @Post()
-    @ApiOperation({ summary: "Create New Product Ingredient" })
+    @ApiOperation({ summary: "Create New Expense" })
     @ApiResponse({ status: HttpStatus.CREATED })
     @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
     @Roles(Role.MANAGER)
-    async create(@Body() ingredient: ProductIngredientDTO) {
-        return await this.productIngredientService.create(ingredient);
+    async create(@Body() expense: ExpenseDTO) {
+        await this.budgetService.decrement(expense.amount);
+        return await this.expenseService.create(expense);
     }
 
     @Get()
@@ -28,22 +31,23 @@ export class ProductIngredientController {
     @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
     @Roles(Role.MANAGER)
     async findAll() {
-        return await this.productIngredientService.findAll({});
+        return await this.expenseService.findAll({});
     }
 
     @Get(":id")
     @ApiResponse({ status: HttpStatus.OK })
     @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
+    @Roles(Role.MANAGER)
     async findOne(@Param("id") id: string) {
-        return await this.productIngredientService.findById(id);
+        return await this.expenseService.findById(id);
     }
 
     @Patch(":id")
     @ApiResponse({ status: HttpStatus.OK })
     @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
     @Roles(Role.MANAGER)
-    async update(@Param("id") id: string, @Body() updates: Partial<ProductIngredientDTO>) {
-        return await this.productIngredientService.update(id, updates);
+    async update(@Param("id") id: string, @Body() updates: Partial<ExpenseDTO>) {
+        return await this.expenseService.update(id, updates);
     }
 
     @Delete(":id")
@@ -51,6 +55,6 @@ export class ProductIngredientController {
     @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
     @Roles(Role.MANAGER)
     async remove(@Param("id") id: string) {
-        return await this.productIngredientService.deleteById(id);
+        return await this.expenseService.deleteById(id);
     }
 }

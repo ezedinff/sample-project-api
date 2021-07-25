@@ -10,4 +10,10 @@ export class ProductService extends BaseService<Product> {
         super()
         this._model = productModel;
     }
+    async getAllWithIngredients() {
+        return await this.productModel.find({}).populate("ingredients");
+    }
+    async getOneWithIngredients(id: string) {
+        return await this.productModel.findById(id).populate("ingredients");
+    }
 }

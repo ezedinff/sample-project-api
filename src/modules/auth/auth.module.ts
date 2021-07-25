@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { UserModule } from "../user/user.module";
+import { AuthController } from "./auth.controller";
 import { JWT_ACCESS_TOKEN_SERVICE, JWT_REFRESH_TOKEN_SERVICE } from "./constants";
 import { AuthService } from "./services/auth.service";
 import { TokenService } from "./services/token.service";
@@ -12,6 +13,7 @@ const jwtServiceFactory = (secret, signOptions = {}) => new JwtService({
     signOptions
 })
 @Module({
+    controllers: [AuthController],
     imports: [
         ConfigModule,
         UserModule
