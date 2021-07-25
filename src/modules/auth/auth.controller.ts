@@ -19,7 +19,7 @@ export class AuthController {
     @ApiOperation({ description: 'authenticate user using username and password' })
     @ApiOkResponse({})
     async authenticate(@Body() credentials: Credentials, @Res() response) {
-        return await this.authService.login(credentials, response);
+        await this.authService.login(credentials, response);
     }
 
     @Post('register')
