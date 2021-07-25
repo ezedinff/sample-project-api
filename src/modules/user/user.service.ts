@@ -16,7 +16,7 @@ export class UserService extends BaseService<User> {
         this._model = userModel;
     }
     async register(user: UserDTO) {
-        const password = this.passwordService.hashPassword(user.password);
+        const password = await this.passwordService.hashPassword(user.password);
         const newUser = await this.create({ ...user, password });
         delete newUser.password;
         return newUser;
