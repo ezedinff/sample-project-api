@@ -29,12 +29,32 @@ const jwtServiceFactory = (secret, signOptions = {}) =>
     }),
     JwtModule.register({
       secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-      signOptions: {
-        expiresIn: 180000,
-      },
     }),
   ],
-  providers: [TokenService, AuthService, JwtStrategy, JwtRefreshStrategy],
+  providers: [
+    TokenService,
+    AuthService,
+    JwtStrategy,
+    JwtRefreshStrategy,
+    {
+      provide: JWT_ACCESS_TOKEN_SERVICE,
+      useFactory: (configService: ConfigService): JwtService => {
+        return jwtServiceFactory(
+          configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+        );
+      },
+      inject: [ConfigService],
+    },
+    {
+      provide: JWT_REFRESH_TOKEN_SERVICE,
+      useFactory: (configService: ConfigService): JwtService => {
+        return jwtServiceFactory(
+          configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+        );
+      },
+      inject: [ConfigService],
+    },
+  ],
   exports: [PassportModule, JwtModule],
 })
 export class AuthModule {}
