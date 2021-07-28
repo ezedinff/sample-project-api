@@ -18,7 +18,7 @@ export class SaleController {
     @ApiResponse({ status: HttpStatus.CREATED })
     @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
     async create(@Body() sale: SaleDTO, @CurrentUser() cashier) {
-        return await this.saleService.create({...sale, cashier: cashier._id});
+        return await this.saleService.addSale(sale, cashier._id);
     }
 
     @Get()

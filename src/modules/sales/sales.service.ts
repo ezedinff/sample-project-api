@@ -22,10 +22,10 @@ export class SaleService extends BaseService<Sale> {
     async getSaleWithProducts(id: string) {
         return this.saleModel.findById(id).populate("items.product").exec();
     }
-    async addSale(sale: SaleDTO) {
+    async addSale(sale: SaleDTO, cashier) {
         const { items, totalPrice } = this.processItems(sale.items);
         await this.budgetService.increment(totalPrice);
-        return await this.create({ items, totalPrice, cashier: sale.cashier });
+        return await this.create({ items, totalPrice, cashier });
     }
     roundToTwo(num) {
         // @ts-ignore
