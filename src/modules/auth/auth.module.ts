@@ -27,7 +27,12 @@ const jwtServiceFactory = (secret, signOptions = {}) =>
       property: 'user',
       session: false,
     }),
-    JwtModule.register({}),
+    JwtModule.register({
+      secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+      signOptions: {
+        expiresIn: '7d',
+      },
+    }),
   ],
   providers: [
     TokenService,
