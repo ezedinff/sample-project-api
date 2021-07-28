@@ -30,7 +30,7 @@ const jwtServiceFactory = (secret, signOptions = {}) =>
     JwtModule.register({
       secret: process.env.JWT_ACCESS_TOKEN_SECRET,
       signOptions: {
-        expiresIn: '7d',
+        expiresIn: 180000,
       },
     }),
   ],
