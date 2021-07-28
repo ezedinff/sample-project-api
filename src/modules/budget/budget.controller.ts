@@ -1,12 +1,12 @@
 import { Body, Controller, Get, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "src/shared/guards/role.guard";
 import { cookieNames } from "../auth/constants";
 import { BudgetService } from "./budget.service";
 
 @Controller("budget")
-@ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+@ApiBearerAuth()
 @ApiTags('Budget')
 @UseGuards(RolesGuard, AuthGuard("jwt"))
 export class BudgetController {

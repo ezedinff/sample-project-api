@@ -1,13 +1,13 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CurrentUser } from "src/shared/decorators/user";
 import { RolesGuard } from "src/shared/guards/role.guard";
 import { cookieNames } from "../auth/constants";
 import { SaleDTO } from "./sales.dto";
 import { SaleService } from "./sales.service";
 
-@ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+@ApiBearerAuth()
 @ApiTags('Sales')
 @Controller('sales')
 @UseGuards(RolesGuard, AuthGuard("jwt"))

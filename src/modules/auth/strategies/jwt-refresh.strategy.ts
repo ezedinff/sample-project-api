@@ -19,7 +19,7 @@ export default class JwtRefreshStrategy extends PassportStrategy(
             issuer: configService.get<string>('JWT_ISSUER'),
             audience: configService.get<string>('JWT_AUDIENCE'),
             jwtFromRequest: ExtractJwt.fromExtractors([
-                (req) => get(req, `cookies.${cookieNames.REFRESH_TOKEN}`),
+                ExtractJwt.fromAuthHeaderAsBearerToken()
             ]),
         });
     }

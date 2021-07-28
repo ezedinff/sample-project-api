@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import {
+    ApiBearerAuth,
     ApiCookieAuth,
     ApiOkResponse,
     ApiOperation,
@@ -15,7 +16,7 @@ import { ProductDTO } from "../dto/product.dto";
 import { ProductService } from "../services/product.service";
 
 @Controller('products')
-@ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+@ApiBearerAuth()
 @ApiTags('Products')
 @UseGuards(RolesGuard, AuthGuard("jwt"))
 export class ProductController {

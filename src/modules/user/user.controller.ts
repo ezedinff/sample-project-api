@@ -5,12 +5,12 @@ import { isEmpty } from "lodash";
 import PasswordService from "./password.service";
 import { Role, User } from "./user";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiCookieAuth, ApiOkResponse, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCookieAuth, ApiOkResponse, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from "src/shared/guards/role.guard";
 import { cookieNames } from "../auth/constants";
 import { Roles } from "src/shared/decorators/role";
 
-@ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+@ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
 @UseGuards(RolesGuard, AuthGuard("jwt"))

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CurrentUser } from "src/shared/decorators/user";
 import { UserDTO } from "../user/user.dto";
 import { UserService } from "../user/user.service";
@@ -30,7 +30,7 @@ export class AuthController {
     }
 
     @Get('me')
-    @ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+    @ApiBearerAuth()
     @ApiOperation({description: 'Returns current authenticated user'})
     @ApiOkResponse({})
     @UseGuards(AuthGuard('jwt'))

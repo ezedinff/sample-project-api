@@ -15,7 +15,7 @@ async function bootstrap() {
     .setTitle('ZAD BAKERY FINANCE MANAGEMENT')
     .setDescription('ZAD BAKERY FINANCE MANAGEMENT API')
     .setVersion('1.0')
-    .addCookieAuth(cookieNames.ACCESS_TOKEN)
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);

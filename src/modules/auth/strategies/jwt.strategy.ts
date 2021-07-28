@@ -16,7 +16,6 @@ export default class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
             issuer: configService.get<string>('JWT_ISSUER'),
             audience: configService.get<string>('JWT_AUDIENCE'),
             jwtFromRequest: ExtractJwt.fromExtractors([
-                (req) => get(req, `cookies.${cookieNames.ACCESS_TOKEN}`),
                 ExtractJwt.fromAuthHeaderAsBearerToken()
             ]),
         });

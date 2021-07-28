@@ -22,12 +22,10 @@ export class AuthService {
         const accessToken = await this.tokenService.generateToken(TokenType.ACCESS, user.get('_id').toString());
         const refreshToken = await this.tokenService.generateToken(TokenType.REFRESH, user.get('_id').toString());
         await this.userService.update(user._id, { refreshToken });
-        response.cookie(cookieNames.ACCESS_TOKEN, accessToken, { expires: moment().add(ACCESS_TOKEN_EXPIRE_TIME, 'ms').toDate() });
-        response.cookie(cookieNames.REFRESH_TOKEN, refreshToken, { expires: moment().add(REFRESH_TOKEN_EXPIRE_TIME, 'ms').toDate() })
         const curUser = user.toObject();
         delete curUser.password;
         delete curUser.refreshToken;
         delete curUser.__v;
-        response.send(curUser);
+        response.send({user: curUser, access: accessToken, refresh: refreshToken});
     }
 }

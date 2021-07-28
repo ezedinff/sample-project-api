@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/shared/decorators/role";
 import { RolesGuard } from "src/shared/guards/role.guard";
 import { cookieNames } from "../auth/constants";
@@ -10,7 +10,7 @@ import { ExpenseDTO } from "./expense.dto";
 import { ExpenseService } from "./expense.service";
 
 @Controller("expenses")
-@ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+@ApiBearerAuth()
 @ApiTags('Expenses')
 @UseGuards(RolesGuard, AuthGuard("jwt"))
 export class ExpenseController {

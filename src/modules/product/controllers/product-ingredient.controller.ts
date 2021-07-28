@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { ApiCookieAuth, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiCookieAuth, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { cookieNames } from "src/modules/auth/constants";
 import { Role } from "src/modules/user/user";
 import { Roles } from "src/shared/decorators/role";
@@ -10,7 +10,7 @@ import { ProductIngredientService } from "../services/product-ingredient.service
 
 @Controller('product-ingredients')
 @ApiTags('Product Ingredients')
-@ApiCookieAuth(cookieNames.ACCESS_TOKEN)
+@ApiBearerAuth()
 @UseGuards(RolesGuard, AuthGuard("jwt"))
 export class ProductIngredientController {
     constructor(private productIngredientService: ProductIngredientService) { }
