@@ -5,6 +5,8 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { UserDTO } from './user.dto';
@@ -53,17 +55,20 @@ export class UserController {
     return users;
   }
   //
-  @Patch(':id')
+  @Patch()
   @ApiResponse({ status: HttpStatus.OK })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
-  async update(@Param('id') id: string, @Body() update: Partial<UserDTO>) {
+  async update(@Req() req, @Body() update: Partial<UserDTO>) {
     if (isEmpty(update.password)) {
-      const user = await this.userService.update(id, update);
+      const user = await this.userService.update(req.user._id, update);
       delete user.password;
       return user;
     }
     let password = this.passwordService.hashPassword(update.password);
-    const user = await this.userService.update(id, { ...update, password });
+    const user = await this.userService.update(req.user._id, {
+      ...update,
+      password,
+    });
     delete user.password;
     return user;
   }
