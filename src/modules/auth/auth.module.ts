@@ -34,31 +34,7 @@ const jwtServiceFactory = (secret, signOptions = {}) =>
       },
     }),
   ],
-  providers: [
-    TokenService,
-    AuthService,
-    JwtStrategy,
-    JwtRefreshStrategy,
-
-    {
-      provide: JWT_ACCESS_TOKEN_SERVICE,
-      useFactory: (configService: ConfigService): JwtService => {
-        return jwtServiceFactory(
-          configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-        );
-      },
-      inject: [ConfigService],
-    },
-    {
-      provide: JWT_REFRESH_TOKEN_SERVICE,
-      useFactory: (configService: ConfigService): JwtService => {
-        return jwtServiceFactory(
-          configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-        );
-      },
-      inject: [ConfigService],
-    },
-  ],
+  providers: [TokenService, AuthService, JwtStrategy, JwtRefreshStrategy],
   exports: [PassportModule, JwtModule],
 })
 export class AuthModule {}
