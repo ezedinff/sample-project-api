@@ -5,7 +5,11 @@ import { cookieNames } from './modules/auth/constants';
 import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   app.use(cookieParser());
   const options = new DocumentBuilder()
     .setTitle('ZAD BAKERY FINANCE MANAGEMENT')

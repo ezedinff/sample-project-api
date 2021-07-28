@@ -9,7 +9,4 @@ class SaleItem {
 export class SaleDTO {
     @ApiProperty({ type: [SaleItem], required: true })
     items: SaleItem[];
-
-    @ApiProperty({ type: String, required: true, description: "Id of cashier" })
-    cashier: string;
 }

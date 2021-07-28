@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { CurrentUser } from "src/shared/decorators/user";
 import { RolesGuard } from "src/shared/guards/role.guard";
 import { cookieNames } from "../auth/constants";
 import { SaleDTO } from "./sales.dto";
@@ -16,8 +17,8 @@ export class SaleController {
     @ApiOperation({ summary: "Create New Sale" })
     @ApiResponse({ status: HttpStatus.CREATED })
     @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
-    async create(@Body() sale: SaleDTO) {
-        return await this.saleService.create(sale);
+    async create(@Body() sale: SaleDTO, @CurrentUser() cashier) {
+        return await this.saleService.create({...sale, cashier: cashier._id});
     }
 
     @Get()
