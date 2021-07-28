@@ -20,7 +20,7 @@ export default class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       ]),
     });
   }
-  async validate(payload: any) {
+  async validate(payload: { sub: string }) {
     return await this.userService.findById(String(payload.sub));
   }
 }

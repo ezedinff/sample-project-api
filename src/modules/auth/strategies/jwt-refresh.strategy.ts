@@ -7,25 +7,24 @@ import { cookieNames } from '../constants';
 import { UserService } from 'src/modules/user/user.service';
 @Injectable()
 export default class JwtRefreshStrategy extends PassportStrategy(
-    Strategy,
-    'jwt-refresh',
+  Strategy,
+  'jwt-refresh',
 ) {
-    public constructor(
-        private readonly userService: UserService,
-        protected readonly configService: ConfigService,
-    ) {
-        super({
-            secretOrKey: configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-            issuer: configService.get<string>('JWT_ISSUER'),
-            audience: configService.get<string>('JWT_AUDIENCE'),
-            jwtFromRequest: ExtractJwt.fromExtractors([
-                ExtractJwt.fromAuthHeaderAsBearerToken()
-            ]),
-        });
-    }
+  public constructor(
+    private readonly userService: UserService,
+    protected readonly configService: ConfigService,
+  ) {
+    super({
+      secretOrKey: configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+      issuer: configService.get<string>('JWT_ISSUER'),
+      audience: configService.get<string>('JWT_AUDIENCE'),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
+    });
+  }
 
-    async validate(request, payload) {
-        const refreshToken = request.cookies?.Refresh;
-        return this.userService.findOne({ refreshToken, _id: payload.sub });
-    }
+  async validate(payload: { sub: string }) {
+    return await this.userService.findOne({ _id: payload.sub });
+  }
 }
