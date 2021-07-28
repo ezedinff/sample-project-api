@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
@@ -27,6 +27,7 @@ const jwtServiceFactory = (secret, signOptions = {}) =>
       property: 'user',
       session: false,
     }),
+    JwtModule.register({}),
   ],
   providers: [
     TokenService,
@@ -53,5 +54,6 @@ const jwtServiceFactory = (secret, signOptions = {}) =>
       inject: [ConfigService],
     },
   ],
+  exports: [PassportModule, JwtModule],
 })
 export class AuthModule {}
