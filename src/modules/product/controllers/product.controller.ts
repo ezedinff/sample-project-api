@@ -43,13 +43,13 @@ export class ProductController {
   @ApiOkResponse({})
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
   async findAll() {
-    return await this.productService.getAllWithIngredients();
+    return await this.productService.findAll({});
   }
   @Get(':id')
   @ApiOkResponse({})
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
   async findOne(@Param('id') id: string) {
-    return await this.productService.getOneWithIngredients(id);
+    return await this.productService.findById(id);
   }
 
   @ApiOkResponse({})
