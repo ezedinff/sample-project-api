@@ -10,21 +10,26 @@ import { SalesModule } from './modules/sales/sales.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './shared/guards/role.guard';
 import { ExpenseModule } from './modules/expense/expense.module';
+import { BudgetModule } from './modules/budget/budget.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRootAsync({ useClass: MongooseConfigService, imports: [ConfigModule] }),
+    MongooseModule.forRootAsync({
+      useClass: MongooseConfigService,
+      imports: [ConfigModule],
+    }),
     AuthModule,
     ExpenseModule,
-    SalesModule
+    SalesModule,
+    BudgetModule,
   ],
   controllers: [AppController],
   providers: [
-    AppService, 
+    AppService,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
-    }
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}
