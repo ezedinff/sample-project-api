@@ -22,7 +22,7 @@ export class AppService {
     const totalSales = sales.reduce((pr, cr) => (pr += cr.total), 0);
     const totalExpense = expenses.reduce((pr, cr) => (pr += cr.amount), 0);
     const profit =
-      totalSales - totalExpense <= 0 ? 0.0 : totalExpense - totalSales;
+      totalSales - totalExpense <= 0 ? 0.0 : totalSales - totalExpense;
     const loss =
       totalExpense - totalSales <= 0 ? 0.0 : totalExpense - totalSales;
     return {
