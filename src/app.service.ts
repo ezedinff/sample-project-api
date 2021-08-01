@@ -27,7 +27,10 @@ export class AppService {
       totalExpense - totalSales <= 0 ? 0.0 : totalExpense - totalSales;
     return {
       boards: [
-        { label: 'Budget', value: budgets[0].amount },
+        {
+          label: 'Budget',
+          value: budgets[0].amount > 0 ? budgets[0].amount : 0.0,
+        },
         { label: 'Sales', value: totalSales },
         { label: 'Profit', value: profit },
         { label: 'Loss', value: loss },

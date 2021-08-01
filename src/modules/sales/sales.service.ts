@@ -18,13 +18,25 @@ export class SaleService extends BaseService<Sale> {
     this._model = saleModel;
   }
   async getSalesWithProducts() {
-    return await this.saleModel.find({}).populate('items.product').exec();
+    return await this.saleModel
+      .find({})
+      .populate('cashier', ['firstName', 'lastName'])
+      .exec();
   }
   async getSaleWithProducts(id: string) {
-    return this.saleModel.findById(id).populate('items.product').exec();
+    return this.saleModel
+      .findById(id)
+      .populate({
+        path: 'items',
+        populate: {
+          path: 'product',
+        },
+      })
+      .exec();
   }
   async addSale(sale: SaleDTO, cashier) {
-    const { items, totalPrice } = this.processItems(sale.items);
+    const { items, totalPrice } = await this.processItems(sale.items);
+    console.log(items, totalPrice);
     await this.budgetService.increment(totalPrice);
     return await this.create({ items, totalPrice, cashier });
   }
@@ -32,22 +44,25 @@ export class SaleService extends BaseService<Sale> {
     // @ts-ignore
     return +(Math.round(num + 'e+2') + 'e-2');
   }
-  processItems(saleItems) {
-    const items = saleItems.map(async (item) => {
-      const product = await this.productService.findById(item.product);
-      const availableQuantity = product.availableQuantity - item.quantity;
-      const totalQuantitySold = product.totalQuantitySold + item.quantity;
-      await this.productService.update(item.product, {
-        availableQuantity,
-        totalQuantitySold,
-        isAvailable: availableQuantity > 0,
-      });
-      return {
-        ...item,
-        unitPrice: product.price,
-        subTotal: this.roundToTwo(item.quantity * product.price),
-      };
-    });
+  async processItems(saleItems) {
+    const items: any = await Promise.all(
+      saleItems.map(async (item) => {
+        const product = await this.productService.findById(item.product);
+        const availableQuantity = product.availableQuantity - item.quantity;
+        const totalQuantitySold = product.totalQuantitySold + item.quantity;
+        await this.productService.update(item.product, {
+          availableQuantity,
+          totalQuantitySold,
+          isAvailable: availableQuantity > 0,
+        });
+        return {
+          quantity: item.quantity,
+          product: product.name,
+          unitPrice: product.price,
+          subTotal: this.roundToTwo(item.quantity * product.price),
+        };
+      }),
+    );
     const totalPrice = items.reduce((prv, cr) => (prv += cr.subTotal), 0);
     return { items, totalPrice };
   }
@@ -56,7 +71,7 @@ export class SaleService extends BaseService<Sale> {
       {
         $group: {
           _id: {
-            $dateFromString: { format: '%d-%m-%Y', dateString: '$created_at' },
+            $dateToString: { format: '%d-%m-%Y', date: '$createdAt' },
           },
           total: {
             $sum: '$totalPrice',
