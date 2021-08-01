@@ -8,9 +8,7 @@ import {
 @Injectable()
 export class TokenService {
   constructor(
-    @Inject(JWT_ACCESS_TOKEN_SERVICE)
     private readonly accessTokenService: JwtService,
-    @Inject(JWT_REFRESH_TOKEN_SERVICE)
     private readonly refreshTokenService: JwtService,
   ) {}
 
