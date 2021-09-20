@@ -15,6 +15,9 @@ export class TokenService {
   generateToken(tokenType: TokenType, userId: string) {
     if (!userId) return;
     if (TokenType.ACCESS) return this.accessTokenService.sign({ sub: userId });
-    return this.refreshTokenService.sign({ sub: userId });
+    return this.refreshTokenService.sign(
+      { sub: userId },
+      { expiresIn: 60 * 60 * 24 * 30 },
+    );
   }
 }

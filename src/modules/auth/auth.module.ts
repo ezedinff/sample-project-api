@@ -28,7 +28,8 @@ const jwtServiceFactory = (secret, signOptions = {}) =>
       session: false,
     }),
     JwtModule.register({
-      secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+      //secretOrPrivateKey: process.env.JWT_ACCESS_TOKEN_SECRET,
+      secret: '6447AED4184B92D841CDB9E7257AA',
     }),
   ],
   providers: [

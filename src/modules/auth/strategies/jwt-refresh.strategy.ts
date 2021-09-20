@@ -25,6 +25,6 @@ export default class JwtRefreshStrategy extends PassportStrategy(
   }
 
   async validate(payload: { sub: string }) {
-    return await this.userService.findOne({ _id: payload.sub });
+    return this.userService.findOne({ _id: payload.sub });
   }
 }

@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Post,
   Req,
   Res,
   UseGuards,
@@ -13,7 +14,7 @@ import { UserDTO } from './user.dto';
 import { UserService } from './user.service';
 import { isEmpty } from 'lodash';
 import PasswordService from './password.service';
-import { Role, User } from './user';
+import { User } from './user';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBearerAuth,
@@ -25,11 +26,12 @@ import {
 import { RolesGuard } from 'src/shared/guards/role.guard';
 import { cookieNames } from '../auth/constants';
 import { Roles } from 'src/shared/decorators/role';
-
+class AddFriendDTO {
+  userId: string;
+}
 @ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
-@UseGuards(RolesGuard, AuthGuard('jwt'))
 export class UserController {
   constructor(
     private userService: UserService,
@@ -46,13 +48,11 @@ export class UserController {
   @Get()
   @ApiResponse({ status: HttpStatus.OK })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
-  async findAll(): Promise<User[]> {
-    let users = await this.userService.findAll({});
-    users = users.map((user) => {
-      delete user.password;
-      return user;
+  async findAll() {
+    return (await this.userService.findAll({})).map((user) => {
+      const { password, ...rest } = user.toObject();
+      return rest;
     });
-    return users;
   }
   //
   @Patch()
@@ -64,12 +64,26 @@ export class UserController {
       delete user.password;
       return user;
     }
-    let password = this.passwordService.hashPassword(update.password);
+    const password = this.passwordService.hashPassword(update.password);
     const user = await this.userService.update(req.user._id, {
       ...update,
       password,
     });
     delete user.password;
     return user;
+  }
+
+  @Post('add-friend')
+  @UseGuards(AuthGuard('jwt'))
+  async addFriend(@Req() req, @Body() addFriend: AddFriendDTO) {
+    const currentUser = await this.userService.findById(req.user._id);
+    if (
+      currentUser.friends.includes(addFriend.userId) &&
+      currentUser._id.toString() != addFriend.userId
+    ) {
+      currentUser.friends.push(addFriend.userId);
+      currentUser.save();
+    }
+    return currentUser;
   }
 }

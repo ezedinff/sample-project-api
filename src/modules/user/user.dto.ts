@@ -1,15 +1,14 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Role } from "./user";
+import { ApiProperty } from '@nestjs/swagger';
+import { Address, Gender, UserRole } from './user';
 
 export class UserDTO {
-    @ApiProperty({ type: String, required: true })
-    firstName: string;
-    @ApiProperty({ type: String, required: true })
-    lastName: string;
-    @ApiProperty({ type: String, required: true })
-    username: string;
-    @ApiProperty({ type: String, required: true })
-    password: string;
-    @ApiProperty({ type: String, enum: Role, required: true })
-    role: Role;
+  firstName!: string;
+  lastName!: string;
+  email!: string;
+  role!: UserRole;
+  birthDate!: Date;
+  password!: string;
+  gender!: Gender;
+  address?: Address; // optional
+  photo?: string; // optional
 }

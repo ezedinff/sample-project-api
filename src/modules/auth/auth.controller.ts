@@ -23,6 +23,9 @@ import { cookieNames } from './constants';
 import { Credentials } from './credentials';
 import { AuthService } from './services/auth.service';
 
+class RefreshTokenDTO {
+  refreshToken: string;
+}
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
@@ -43,16 +46,28 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ description: 'Register new user' })
   @ApiCreatedResponse({})
-  async register(@Body() user: UserDTO) {
-    return await this.userService.register(user);
+  async register(@Body() user: UserDTO, @Res() response) {
+    await this.authService.buildUserResponse(
+      await this.userService.register(user),
+    );
+    await this.authenticate(
+      { username: user.email, password: user.password },
+      response,
+    );
   }
 
-  @Get('me')
   @ApiBearerAuth()
+  @Get('me')
   @ApiOperation({ description: 'Returns current authenticated user' })
   @ApiOkResponse({})
   @UseGuards(AuthGuard('jwt'))
   async me(@Req() req) {
     return req.user;
+  }
+
+  @Post('refresh')
+  async refreshToken(@Body() refresh: RefreshTokenDTO) {
+    const { refreshToken } = refresh;
+    return { access: await this.authService.refreshToken(refreshToken) };
   }
 }
