@@ -78,7 +78,7 @@ export class UserController {
   async addFriend(@Req() req, @Body() addFriend: AddFriendDTO) {
     const currentUser = await this.userService.findById(req.user._id);
     if (
-      currentUser.friends.includes(addFriend.userId) &&
+      !currentUser.friends.includes(addFriend.userId) &&
       currentUser._id.toString() != addFriend.userId
     ) {
       currentUser.friends.push(addFriend.userId);
